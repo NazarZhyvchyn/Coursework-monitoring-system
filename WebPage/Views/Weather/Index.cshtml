@@ -1,0 +1,259 @@
+﻿@inject IHtmlLocalizer<SharedLocalizer> Localizer
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    ViewData["Title"] = Localizer["ProjectName"];
+}
+
+@{ 
+    Weather latestData = (Weather)ViewData["LatestData"];
+    List<Weather> hoursData = (List<Weather>)ViewData["HoursData"];
+}
+
+<script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
+
+<div class="text-center">
+    <h1 class="display-4">@Localizer["Welcome"]</h1>
+</div>
+
+<div class="weather-content">
+    <div>
+        <h1 class="weather-h1">@Localizer["Introduction"]</h1>
+        <div>
+            <div>@Localizer["I1"]</div>
+            <ul>
+                <li>@Localizer["I21"]</li>
+                <li>@Localizer["I22"]</li>
+                <li>@Localizer["I211"]</li>
+                <li><s>@Localizer["I23"]</s></li>
+                <li><s>@Localizer["I24"]</s></li>
+                <li><s>@Localizer["I25"]</s></li>
+                <li>@Localizer["I26"]</li>
+                <li>@Localizer["I27"]</li>
+                <li>@Localizer["I28"]</li>
+                <li>@Localizer["I29"]</li>
+                <li>@Localizer["I210"]</li>
+            </ul>
+            <p>@Localizer["I3"]</p>
+            <p>@Localizer["I4"]</p>
+        </div>
+    </div>
+
+    <div>
+        <h1 class="weather-h1">@Localizer["LatestData"]</h1>
+        <small class="weather-small">@Localizer["LatestDataSmall"]</small>
+
+        <table class="weather-table">
+            <tbody>
+                <tr>
+                    <td><b>@Localizer["Time"]</b></td>
+                    <td>@latestData.DateTime.ToString("yyyy/MM/dd HH:mm")</td>
+                </tr>
+                <tr>
+                    <td><b>@Localizer["Temperature"]</b></td>
+                    <td>@latestData.Temperature ℃</td>
+                </tr>
+                <tr>
+                    <td><b>@Localizer["Humidity"]</b></td>
+                    <td>@latestData.Humidity %</td>
+                </tr>
+                <tr>
+                    <td><b>@Localizer["Pressure"]</b></td>
+                    <td>@latestData.Pressure Pa</td>
+                </tr>
+                <tr>
+                    <td><b>@Localizer["Dust"]</b></td>
+                    <td>@latestData.Dust mg/m³</td>
+                </tr>
+                @*<tr>
+                    <td><b>@Localizer["UV"]</b></td>
+                    <td>@latestData.UV mW/cm²</td>
+                </tr>*@
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h1 class="weather-h1">@Localizer["6HourData"]</h1>
+        <small class="weather-small">@Localizer["6HourDataSmall"]</small>
+
+        <div>
+            <div id="temp" class="weather-chart"></div>
+            <div id="humi" class="weather-chart"></div>
+            <div id="press" class="weather-chart"></div>
+            <div id="dust" class="weather-chart"></div>
+            @*<div id="uv" class="weather-chart"></div>*@
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var temp = echarts.init(document.getElementById('temp'));
+    var tempOpt = {
+        title: {
+            text: '@Localizer["Temperature"]'
+        },
+        tooltip: {},
+        legend: {
+            data: ['@Localizer["Temperature"]']
+        },
+        xAxis: {
+            name: '@Localizer["Time"]',
+            data: ["@hoursData[0].DateTime.ToString("MM/dd HH:mm")", "@hoursData[1].DateTime.ToString("MM/dd HH:mm")", "@hoursData[2].DateTime.ToString("MM/dd HH:mm")", "@hoursData[3].DateTime.ToString("MM/dd HH:mm")", "@hoursData[4].DateTime.ToString("MM/dd HH:mm")", "@hoursData[5].DateTime.ToString("MM/dd HH:mm")"]
+        },
+        yAxis: {
+            name: '@Localizer["Temperature"] (℃)'
+        },
+        series: [{
+            name: '@Localizer["Temp"] (℃)',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+                normal: {
+                    color: '#c23531',  //圈圈的颜色
+                    lineStyle: {
+                        color: '#c23531'  //线的颜色
+                    }
+                }
+            },
+            data: [@hoursData[0].Temperature, @hoursData[1].Temperature, @hoursData[2].Temperature, @hoursData[3].Temperature, @hoursData[4].Temperature, @hoursData[5].Temperature]
+        }]
+    };
+    temp.setOption(tempOpt);
+
+    var humi = echarts.init(document.getElementById('humi'));
+    var humiOpt = {
+        title: {
+            text: '@Localizer["Humidity"]'
+        },
+        tooltip: {},
+        legend: {
+            data: ['@Localizer["Humidity"]']
+        },
+        xAxis: {
+            name: '@Localizer["Time"]',
+            data: ["@hoursData[0].DateTime.ToString("MM/dd HH:mm")", "@hoursData[1].DateTime.ToString("MM/dd HH:mm")", "@hoursData[2].DateTime.ToString("MM/dd HH:mm")", "@hoursData[3].DateTime.ToString("MM/dd HH:mm")", "@hoursData[4].DateTime.ToString("MM/dd HH:mm")", "@hoursData[5].DateTime.ToString("MM/dd HH:mm")"]
+        },
+        yAxis: {
+            name: '@Localizer["Humidity"] (%)'
+        },
+        series: [{
+            name: '@Localizer["Humidity"] (%)',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+                normal: {
+                    color: '#2f4554',
+                    lineStyle: {
+                        color: '#2f4554'
+                    }
+                }
+            },
+            data: [@hoursData[0].Humidity, @hoursData[1].Humidity, @hoursData[2].Humidity, @hoursData[3].Humidity, @hoursData[4].Humidity, @hoursData[5].Humidity]
+        }]
+    };
+    humi.setOption(humiOpt);
+
+    var press = echarts.init(document.getElementById('press'));
+    var pressOpt = {
+        title: {
+            text: '@Localizer["Pressure"]'
+        },
+        tooltip: {},
+        legend: {
+            data: ['@Localizer["Pressure"]']
+        },
+        xAxis: {
+            name: '@Localizer["Time"]',
+            data: ["@hoursData[0].DateTime.ToString("MM/dd HH:mm")", "@hoursData[1].DateTime.ToString("MM/dd HH:mm")", "@hoursData[2].DateTime.ToString("MM/dd HH:mm")", "@hoursData[3].DateTime.ToString("MM/dd HH:mm")", "@hoursData[4].DateTime.ToString("MM/dd HH:mm")", "@hoursData[5].DateTime.ToString("MM/dd HH:mm")"]
+        },
+        yAxis: {
+            name: '@Localizer["Pressure"] (Pa)',
+            min: function(value) {
+                return parseInt(value.min) - 100;
+            }
+        },
+        series: [{
+            name: '@Localizer["Pressure"] (Pa)',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+                normal: {
+                    color: '#61a0a8',
+                    lineStyle: {
+                        color: '#61a0a8'
+                    }
+                }
+            },
+            data: [@hoursData[0].Pressure, @hoursData[1].Pressure, @hoursData[2].Pressure, @hoursData[3].Pressure, @hoursData[4].Pressure, @hoursData[5].Pressure]
+        }]
+    };
+    press.setOption(pressOpt);
+
+    var dust = echarts.init(document.getElementById('dust'));
+    var dustOpt = {
+        title: {
+            text: '@Localizer["Dust"]'
+        },
+        tooltip: {},
+        legend: {
+            data: ['@Localizer["Dust"]']
+        },
+        xAxis: {
+            name: '@Localizer["Time"]',
+            data: ["@hoursData[0].DateTime.ToString("MM/dd HH:mm")", "@hoursData[1].DateTime.ToString("MM/dd HH:mm")", "@hoursData[2].DateTime.ToString("MM/dd HH:mm")", "@hoursData[3].DateTime.ToString("MM/dd HH:mm")", "@hoursData[4].DateTime.ToString("MM/dd HH:mm")", "@hoursData[5].DateTime.ToString("MM/dd HH:mm")"]
+        },
+        yAxis: {
+            name: '@Localizer["Dust"] (mg/m³)'
+        },
+        series: [{
+            name: '@Localizer["Dust"] (mg/m³)',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+                normal: {
+                    color: '#d48265',
+                    lineStyle: {
+                        color: '#d48265'
+                    }
+                }
+            },
+            data: [@hoursData[0].Dust, @hoursData[1].Dust, @hoursData[2].Dust, @hoursData[3].Dust, @hoursData[4].Dust, @hoursData[5].Dust]
+        }]
+    };
+    dust.setOption(dustOpt);
+
+    @*var uv = echarts.init(document.getElementById('uv'));
+    var uvOpt = {
+        title: {
+            text: '@Localizer["UV"]'
+        },
+        tooltip: {},
+        legend: {
+            data: ['@Localizer["UV"]']
+        },
+        xAxis: {
+            name: '@Localizer["Time"]',
+            data: ["@hoursData[0].DateTime.ToString("MM/dd HH:mm")", "@hoursData[1].DateTime.ToString("MM/dd HH:mm")", "@hoursData[2].DateTime.ToString("MM/dd HH:mm")", "@hoursData[3].DateTime.ToString("MM/dd HH:mm")", "@hoursData[4].DateTime.ToString("MM/dd HH:mm")", "@hoursData[5].DateTime.ToString("MM/dd HH:mm")"]
+        },
+        yAxis: {
+            name: '@Localizer["UV"] (mW/cm²)'
+        },
+        series: [{
+            name: '@Localizer["UV"] (mW/cm²)',
+            type: 'line',
+            smooth: true,
+            itemStyle: {
+                normal: {
+                    color: '#91c7ae',
+                    lineStyle: {
+                        color: '#91c7ae'
+                    }
+                }
+            },
+            data: [@hoursData[0].UV, @hoursData[1].UV, @hoursData[2].UV, @hoursData[3].UV, @hoursData[4].UV, @hoursData[5].UV]
+        }]
+    };
+    uv.setOption(uvOpt);*@
+</script>
